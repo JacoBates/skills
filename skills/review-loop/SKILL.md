@@ -21,6 +21,14 @@ until a reviewer returns no actionable feedback. Only then hand off.
 first layer; your fixes introduce a second layer; convergence is a *clean pass by
 a reviewer who has never seen the earlier rounds*, not "I think it's fine now."
 
+**This is one reviewer at a time, in sequence - not parallel-agent work.** Each
+round dispatches a *single* fresh reviewer that must judge the state produced by
+the previous round's fixes, so the rounds share state and are strictly ordered.
+Do not reach for a parallel-dispatch technique (e.g. `dispatching-parallel-agents`)
+and run several reviewers at once: that skill is for 2+ *independent* tasks with no
+shared state, which is the opposite of this loop. Parallel reviewers would all see
+the same pre-fix state and destroy the convergence property this skill exists for.
+
 This composes with a one-shot code-review skill (e.g. superpowers'
 `requesting-code-review`), if you have one installed (that skill = how to
 dispatch one review; this skill = how many, and when to stop). This skill does
