@@ -1,0 +1,4 @@
+interface:
+  display_name: "Phone a Friend"
+  short_description: "Route subtasks to the best-fit model"
+  default_prompt: "Use $phone-a-friend to decide whether this subtask should be delegated and route it to the least overpowered model that can do it well."
