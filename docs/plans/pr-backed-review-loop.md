@@ -121,7 +121,7 @@ opencode run \
   'Complete the attached active-work scenario. Return exact actions, not general advice.' \
   --model 'openai/gpt-5.6-sol' \
   --variant 'high' \
-  --dir '/Users/jaco/Repositories/skills' \
+  --dir '/Users/jaco/Repositories/skills/.worktrees/pr-backed-review-loop' \
   --format json \
   --file 'skills/running-pr-backed-review-loops/tests/descriptive-loop-scenario.md'
 ```
@@ -227,7 +227,7 @@ git commit -m "feat: add PR-backed review loop skill"
 Run:
 
 ```bash
-npx skills add /Users/jaco/Repositories/skills \
+npx skills add /Users/jaco/Repositories/skills/.worktrees/pr-backed-review-loop \
   --skill running-pr-backed-review-loops \
   -a opencode -g -y
 ```
@@ -253,7 +253,7 @@ opencode run \
   'Execute the PR-backed descriptive-comment review loop in the attached scenario. Return exact actions and subagent boundaries. This is active work, not an academic summary.' \
   --model 'openai/gpt-5.6-sol' \
   --variant 'high' \
-  --dir '/Users/jaco/Repositories/skills' \
+  --dir '/Users/jaco/Repositories/skills/.worktrees/pr-backed-review-loop' \
   --format json \
   --file 'skills/running-pr-backed-review-loops/tests/descriptive-loop-scenario.md'
 ```
@@ -324,7 +324,7 @@ opencode run \
   'Continue the active PR-backed review loop in the attached recovery scenario. Return exact next actions.' \
   --model 'openai/gpt-5.6-sol' \
   --variant 'high' \
-  --dir '/Users/jaco/Repositories/skills' \
+  --dir '/Users/jaco/Repositories/skills/.worktrees/pr-backed-review-loop' \
   --format json \
   --file 'skills/running-pr-backed-review-loops/tests/recovery-scenario.md'
 ```
@@ -354,7 +354,7 @@ git commit -m "test: pressure-test PR review loop recovery"
 
 Do not stage `.jaco/` reports.
 
-### Task 5: Final Review, Deployment, And Fresh Invocation
+### Task 5: Final Review And Fresh Invocation
 
 **Files:**
 - Verify: `skills/running-pr-backed-review-loops/SKILL.md`
@@ -364,7 +364,7 @@ Do not stage `.jaco/` reports.
 
 **Interfaces:**
 - Consumes: all committed skill and test artifacts
-- Produces: reviewed public skill pushed to its source repository and synchronized through `npx skills`
+- Produces: reviewed feature branch and verified local test installation, ready for branch integration and published-source synchronization
 
 - [ ] **Step 1: Run a fresh whole-skill review**
 
@@ -396,13 +396,21 @@ GREEN: 5/5 automatic invocations and 5/5 full rubric passes
 RECOVERY: 5/5 automatic invocations and 5/5 pressure passes
 ```
 
-- [ ] **Step 3: Push the authored source**
+- [ ] **Step 3: Push the reviewed feature branch**
 
-Inspect `git status`, `git diff`, and `git log --oneline -10`, then push `main` to `origin`. Do not stage anything under `.jaco/`.
+Inspect `git status`, `git diff`, and `git log --oneline -10`, then push `skill/pr-backed-review-loop` to `origin`. Do not stage anything under `.jaco/`.
 
-- [ ] **Step 4: Replace the local test installation with the published source**
+- [ ] **Step 4: Verify the local test installation remains current**
 
 Run:
+
+```bash
+npx skills list -g
+```
+
+Verify the installed canonical copy matches the feature branch's committed `SKILL.md` byte-for-byte and `npx skills list -g` reports `running-pr-backed-review-loops` for OpenCode.
+
+After the feature branch is integrated and pushed to `origin/main`, the parent session replaces this local test installation with the published source:
 
 ```bash
 npx skills remove running-pr-backed-review-loops -g -y
@@ -410,8 +418,6 @@ npx skills add JacoBates/skills \
   --skill running-pr-backed-review-loops \
   -a claude-code -a codex -a opencode -g -y
 ```
-
-Verify the installed canonical copy matches the committed `SKILL.md` byte-for-byte and `npx skills list -g` reports `running-pr-backed-review-loops` for OpenCode.
 
 - [ ] **Step 5: Run one final fresh invocation smoke test**
 
