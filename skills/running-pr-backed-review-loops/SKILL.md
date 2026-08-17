@@ -90,7 +90,7 @@ expected thread first. After an ambiguous write, read remote state before
 another mutation; do not blindly retry.
 
 Complete only when a fresh iteration agrees with every remaining artifact and
-readback confirms: every approved agreement reply exists; zero unresolved loop
+readback confirms: every published agreement reply exists; zero unresolved loop
 artifacts; the intended commit is pushed; the worktree is clean; local HEAD and
 remote PR head are synchronized; the PR is mergeable; and applicable CI passes
 on that head. At substantive disagreement in iteration four, stop and ask the
