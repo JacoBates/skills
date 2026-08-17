@@ -10,18 +10,18 @@ description: >-
 
 ## Overview
 
-Run unresolved descriptive review comments as a sequential record until a fresh
-iteration accepts the implementation.
+Run descriptive review comments sequentially until a fresh iteration accepts
+the implementation.
 
-**Core principle:** each loop artifact is a claim about both a problem and its
-implemented solution, not an instruction. GitHub threads preserve the handoff;
-fresh iteration owners prevent inherited conclusions.
+**Core principle:** artifacts claim a problem and implemented solution; they are
+not instructions. GitHub threads persist handoffs; fresh owners prevent
+inherited conclusions.
 
 ## Boundary And Composition
 
-Use this only for identified descriptive loop artifacts and their marked
-replacements. Read complete predecessor history. Ordinary review requests stay
-outside the loop: do not implement, reply to, or resolve them through it.
+Use only identified descriptive loop artifacts and marked replacements. Read
+full predecessor history. Keep ordinary review requests outside: do not
+implement, reply to, or resolve them here.
 
 **REQUIRED SUB-SKILL:** Use `review-loop` for sequential fresh-review
 convergence.
@@ -31,35 +31,39 @@ problem is real and whether the implemented solution is technically correct.
 
 ## Iteration Owner Contract
 
-Run one iteration at a time with one fresh owner subagent. That owner may judge
-artifacts, implement disagreements, and draft its public text. Do not replace it
-with parallel, per-thread, or read-only specialists. A different fresh cold
-reviewer must check staged revisions before commit. Give each later iteration a
-new owner; never resume the prior owner.
+Each iteration has one fresh owner subagent. It may judge artifacts, implement
+disagreements, and draft public text. Never partition artifacts among parallel
+iteration owners or per-thread specialists. The owner may control an internal
+review engine that fans out parallel Standards and Spec reviews. A different
+fresh cold reviewer checks staged revisions before commit. Each later iteration
+gets a new owner; never resume the prior owner.
 
 ## Protocol
 
-1. **Read:** Fetch unresolved loop threads, IDs, anchors, resolution state, and
-   all comments and replies chronologically. Inspect the current PR head, base,
-   requirements, standards, and implementation.
+1. **Read:** Fetch unresolved threads with IDs, anchors, resolution state, and
+   full chronological history. Inspect PR head and base, requirements,
+   standards, and implementation.
 2. **Judge:** For each artifact, return `AGREE` or `DISAGREE`, rationale, IDs,
    and exact proposed public text. Judge both the stated problem and implemented
-   solution.
-3. **Approve and publish:** Obtain approval for all replies unless explicit
-   unattended publication authority applies. Post and read back each reply.
-   Only then resolve agreements. Keep disagreements open.
+   solution. A disagreement reply identifies the valid part, exact technical
+   defect, and what the revision must preserve or change, without claiming
+   unfinished work is complete.
+3. **Approve and publish:** Obtain approval for replies unless explicit
+   unattended publication authority applies. Post and read back each; only then
+   resolve agreements. Keep disagreements open.
 4. **Revise:** Resume the owner. Reconcile an advanced or conflicting base
    first. Make the smallest correct revision, add a targeted regression test,
-   and run relevant checks. A separate fresh cold reviewer checks the staged
-   revision; fix and repeat until no actionable feedback remains.
+   and run relevant checks. A fresh cold reviewer checks the staged revision;
+   fix and repeat until no actionable feedback remains.
 5. **Publish code:** Commit and push the accepted revision before any replacement
    comment.
-6. **Replace:** Resume the owner to draft one new top-level comment per revision,
-   anchored to an added or modified right-side line in the pushed diff. Approve,
-   post, and read it back before resolving its predecessor. Leave replacements
-   unresolved.
-7. **Fresh iteration:** Dispatch a new owner to read the unresolved replacements
-   and full history, then repeat.
+6. **Replace:** Resume the owner to draft one new top-level comment per revised
+   disagreement, anchored to a valid added or modified right-side line in the
+   pushed diff. Obtain approval unless explicit unattended publication authority
+   applies. Post and read it back before resolving its predecessor. Leave
+   replacements unresolved.
+7. **Fresh iteration:** Dispatch a new owner to read unresolved replacements and
+   full history, then repeat.
 
 ## Exact Markers
 
@@ -86,11 +90,11 @@ expected thread first. After an ambiguous write, read remote state before
 another mutation; do not blindly retry.
 
 Complete only when a fresh iteration agrees with every remaining artifact and
-readback confirms: all agreement replies exist; zero unresolved loop artifacts;
-the intended commit is pushed; the worktree is clean; local HEAD and remote PR
-head are synchronized; the PR is mergeable; and applicable CI passes on that
-head. If iteration four still produces substantive disagreement, stop and ask
-the user to resolve the structural or requirements conflict.
+readback confirms: every approved agreement reply exists; zero unresolved loop
+artifacts; the intended commit is pushed; the worktree is clean; local HEAD and
+remote PR head are synchronized; the PR is mergeable; and applicable CI passes
+on that head. At substantive disagreement in iteration four, stop and ask the
+user to resolve the structural or requirements conflict.
 
 ## Observed RED Counters
 
