@@ -62,8 +62,9 @@ gets a new owner; never resume the prior owner.
    pushed diff. Obtain approval unless explicit unattended publication authority
    applies. Post and read it back before resolving its predecessor. Leave
    replacements unresolved.
-7. **Fresh iteration:** Dispatch a new owner to read unresolved replacements and
-   full history, then repeat.
+7. **Fresh iteration:** Wait for applicable CI to pass on the pushed head, then
+   dispatch a new owner to read unresolved replacements and full history. Never
+   start the next iteration while the current iteration or its CI is incomplete.
 
 ## Exact Markers
 
