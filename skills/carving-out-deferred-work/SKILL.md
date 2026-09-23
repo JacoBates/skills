@@ -75,10 +75,10 @@ any part is missing or vague, the unit isn't ready.
   where relevant, a cross-ref to the ticket that DOES own it. This is where the
   seam is drawn.
 - **Risk & verification** (*named up front*) - the landmine (what could silently
-  break) stated first, then the exact check that proves it didn't: commands, the
-  environment they run in, and which check is the *real gate*. If a tool
-  regenerates artifacts (contract tests, schemas, snapshots), state the required
-  "no diff" check explicitly.
+  break) stated first, then the checks that prove it didn't beyond what CI
+  already enforces: commands and the environment they run in. Don't restate that
+  CI must pass. If a tool regenerates artifacts (contract tests, schemas,
+  snapshots), state the required "no diff" check explicitly.
 - **Deferral justification** (*why now*) - one or two lines on why it's deferred
   now (scope, review cost, separate verification, different concern) so the
   decision is auditable and not re-litigated.
@@ -89,9 +89,9 @@ any part is missing or vague, the unit isn't ready.
    genuine judgement gaps; don't proceed until the seam is sharp.
 2. Draft the title + body from the conversation - deferrals emerge from work in
    flight, so mine what the session already established rather than re-asking it.
-3. **Surface the title and full body to the user for explicit approval before
-   creating anything** - this is public-space text. Do not create on assumed
-   consent.
+3. Where the project's instructions require approval for public-space text,
+   surface the title and full body for explicit approval before creating
+   anything. Do not create on assumed consent.
 4. On approval, create the artifact in the tracker. Where it lives
    (list/status/assignee/parent) and how it relates to the originating work
    (subtask, link, dependency) are per-situation decisions - surface and confirm,
@@ -107,8 +107,8 @@ any part is missing or vague, the unit isn't ready.
 | "Refactor the thing later" as a title | If the title is vague, the seam is vague. Name the specific change. |
 | "The next person will figure out the boundary" | They have zero session memory. Draw the seam now, in Out of scope. |
 | "It's obvious why we're deferring" | Obvious now, gone in a week. Record the justification. |
-| "It works, no need to say how to verify" | Name the landmine and the gate, or the picker-upper can't prove correctness. |
-| "I'll create the ticket, then show you" | Public-space text needs approval BEFORE it lands. Draft, approve, then create. |
+| "It works, no need to say how to verify" | Name the landmine and the checks beyond CI, or the picker-upper can't prove correctness. |
+| "I'll create the ticket, then show you" | Where approval is required, it comes BEFORE the text lands. Draft, approve, then create. |
 | "Everything I noticed should be a ticket" | Only concrete, bounded changes. Vague wishes rot the tracker. |
 | "Chuck it in the backlog and move on" | Fire-and-forget is how deferrals rot. Run the gate, name the sites, state the check - then file. |
 | "a few places / maybe elsewhere" | Hedged scope = unscoped. Enumerate the exact sites now, or the picker-upper inherits your uncertainty. |
