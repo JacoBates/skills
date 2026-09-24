@@ -6,7 +6,7 @@ and complete session exports under `.jaco/pr-backed-review-loop-tests/`.
 
 ## Prerequisites
 
-- `bash`, `git`, `jq`, and `opencode`
+- `bash`, `git`, `jq`, and `opencode` v2
 - OpenCode authentication for `openai/gpt-5.6-sol`
 - No live GitHub target is required; scenarios are hypothetical active-work cases
 
@@ -27,9 +27,10 @@ starting a scorer.
 ## Isolation And Oracles
 
 - Tested agents run from a fresh temporary directory and cannot discover sibling
-  rubrics or repository tests. Filesystem, search, shell, web, and subagent tools
-  are denied; only the temporary package's production and dependency skills are
-  exposed.
+  rubrics or repository tests. Each run gets its own `--standalone` server so the
+  inline `OPENCODE_CONFIG_CONTENT` applies. Every tool except `skill` is denied,
+  and the skill permission only allows the temporary package's production and
+  dependency skills, which hides every globally installed skill.
 - Guided and recovery runs rely on automatic discovery.
 - Authority files test behavior, not discovery. The harness copies them to
   neutral paths and explicitly preloads the production skill.

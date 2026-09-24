@@ -117,11 +117,9 @@ Use five new sessions. Give each only the scenario, repository-global instructio
 For each run, execute this command separately with a fresh session:
 
 ```bash
-opencode run \
+cd '/Users/jaco/Repositories/skills/.worktrees/pr-backed-review-loop' && opencode run \
   'Complete the attached active-work scenario. Return exact actions, not general advice.' \
-  --model 'openai/gpt-5.6-sol' \
-  --variant 'high' \
-  --dir '/Users/jaco/Repositories/skills/.worktrees/pr-backed-review-loop' \
+  --model 'openai/gpt-5.6-sol#high' \
   --format json \
   --file 'skills/running-pr-backed-review-loops/tests/descriptive-loop-scenario.md'
 ```
@@ -249,11 +247,9 @@ Attach `descriptive-loop-scenario.md`. Capture each JSON event stream. Require e
 Run this exact command separately five times:
 
 ```bash
-opencode run \
+cd '/Users/jaco/Repositories/skills/.worktrees/pr-backed-review-loop' && opencode run \
   'Execute the PR-backed descriptive-comment review loop in the attached scenario. Return exact actions and subagent boundaries. This is active work, not an academic summary.' \
-  --model 'openai/gpt-5.6-sol' \
-  --variant 'high' \
-  --dir '/Users/jaco/Repositories/skills/.worktrees/pr-backed-review-loop' \
+  --model 'openai/gpt-5.6-sol#high' \
   --format json \
   --file 'skills/running-pr-backed-review-loops/tests/descriptive-loop-scenario.md'
 ```
@@ -320,11 +316,9 @@ Use five independent sessions and require automatic skill invocation evidence.
 Run this exact command separately five times:
 
 ```bash
-opencode run \
+cd '/Users/jaco/Repositories/skills/.worktrees/pr-backed-review-loop' && opencode run \
   'Continue the active PR-backed review loop in the attached recovery scenario. Return exact next actions.' \
-  --model 'openai/gpt-5.6-sol' \
-  --variant 'high' \
-  --dir '/Users/jaco/Repositories/skills/.worktrees/pr-backed-review-loop' \
+  --model 'openai/gpt-5.6-sol#high' \
   --format json \
   --file 'skills/running-pr-backed-review-loops/tests/recovery-scenario.md'
 ```

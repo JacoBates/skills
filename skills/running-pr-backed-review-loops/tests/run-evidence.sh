@@ -23,42 +23,31 @@ cp "$HOME/.agents/skills/review-loop/SKILL.md" "$package_dir/review-loop/SKILL.m
 cp "$HOME/.agents/skills/receiving-code-review/SKILL.md" \
   "$package_dir/receiving-code-review/SKILL.md"
 
-harness_config=$(jq -cn --arg skill_path "$package_dir" '{
-  skills: {paths: [$skill_path]},
-  permission: {
-    read: "deny",
-    edit: "deny",
-    glob: "deny",
-    grep: "deny",
-    list: "deny",
-    bash: "deny",
-    task: "deny",
-    webfetch: "deny",
-    websearch: "deny",
-    external_directory: "deny",
-    skill: "allow"
-  }
+harness_config=$(jq -cn --arg skill_path "$package_dir" --arg skill_name "$skill_name" '{
+  skills: [$skill_path],
+  permissions: [
+    {action: "*", resource: "*", effect: "deny"},
+    {action: "skill", resource: $skill_name, effect: "allow"},
+    {action: "skill", resource: "review-loop", effect: "allow"},
+    {action: "skill", resource: "receiving-code-review", effect: "allow"}
+  ]
 }')
 
 scorer_config=$(jq -cn '{
-  permission: {
-    read: "allow",
-    edit: "deny",
-    glob: "deny",
-    grep: "deny",
-    list: "deny",
-    bash: "deny",
-    task: "deny",
-    todowrite: "deny",
-    question: "deny",
-    webfetch: "deny",
-    websearch: "deny",
-    lsp: "deny",
-    doom_loop: "deny",
-    external_directory: "deny",
-    skill: "deny"
-  }
+  permissions: [
+    {action: "*", resource: "*", effect: "deny"},
+    {action: "read", resource: "*", effect: "allow"}
+  ]
 }')
+
+run_isolated_opencode() {
+  local config=$1
+  local directory=$2
+  shift 2
+
+  (cd "$directory" && OPENCODE_CONFIG_CONTENT="$config" \
+    opencode run --standalone --model "$model#$variant" --format json "$@")
+}
 
 run_session() {
   local export_name=$1
@@ -70,23 +59,14 @@ run_session() {
   local temporary_export="$evidence_dir/.$export_name.json.tmp"
 
   if [[ -n "$attachment" ]]; then
-    events=$(OPENCODE_DISABLE_EXTERNAL_SKILLS=1 \
-      OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1 \
-      OPENCODE_CONFIG_CONTENT="$harness_config" \
-      opencode run "$prompt" --pure --dir "$work_dir" \
-      --model "$model" --variant "$variant" --format json \
-      --file="$attachment")
+    events=$(run_isolated_opencode "$harness_config" "$work_dir" "$prompt" --file="$attachment")
   else
-    events=$(OPENCODE_DISABLE_EXTERNAL_SKILLS=1 \
-      OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1 \
-      OPENCODE_CONFIG_CONTENT="$harness_config" \
-      opencode run "$prompt" --pure --dir "$work_dir" \
-      --model "$model" --variant "$variant" --format json)
+    events=$(run_isolated_opencode "$harness_config" "$work_dir" "$prompt")
   fi
 
   session_id=$(jq -rs 'map(select(.type == "step_start"))[0].sessionID' <<< "$events")
   [[ "$session_id" == ses_* ]]
-  opencode export "$session_id" > "$temporary_export"
+  opencode session export "$session_id" > "$temporary_export"
   jq -e . "$temporary_export" >/dev/null
   mv "$temporary_export" "$export_path"
 }
@@ -95,12 +75,12 @@ skill_loaded() {
   jq -e --arg skill_name "$skill_name" '
     any(
       .messages[]
-      | select(.info.role == "assistant")
-      | .parts[]
+      | select(.type == "assistant")
+      | .content[]
       | select(.type == "tool");
-      (.tool == "skill" and .state.input.name == $skill_name)
+      (.name == "skill" and .state.input.id == $skill_name)
       or (
-        .tool != "skill"
+        .name != "skill"
         and ((.state.input | tostring) | contains($skill_name) or contains("SKILL.md"))
       )
     )
@@ -111,8 +91,8 @@ assert_no_protected_access() {
   jq -e --arg repo_root "$repo_root" '
     all(
       .messages[]
-      | select(.info.role == "assistant")
-      | .parts[]
+      | select(.type == "assistant")
+      | .content[]
       | select(.type == "tool");
       ((.state.input | tostring) | contains($repo_root) | not)
     )
@@ -126,18 +106,20 @@ assert_scorer_tools() {
   jq -e --arg score_dir "$score_dir/" '
     all(
       .messages[]
-      | select(.info.role == "assistant")
-      | .parts[]
+      | select(.type == "assistant")
+      | .content[]
       | select(.type == "tool");
-      .tool == "read"
+      (.state.input.path // "") as $path
+      | .name == "read"
       and (
         (
           .state.status == "completed"
           and (
-            (.state.input.filePath // "") == ($score_dir | rtrimstr("/"))
-            or ((.state.input.filePath // "") | startswith($score_dir))
+            $path == ($score_dir | rtrimstr("/"))
+            or ($path | startswith($score_dir))
+            or ($path != "" and ($path | test("^[/~$]") | not))
           )
-          and (((.state.input.filePath // "") | split("/") | index("..")) == null)
+          and (($path | split("/") | index("..")) == null)
         )
         or .state.status == "error"
       )
@@ -167,17 +149,17 @@ score_suite() {
         "",
         "Assistant text:",
         (.messages[]
-          | select(.info.role == "assistant")
-          | .parts[]
+          | select(.type == "assistant")
+          | .content[]
           | select(.type == "text")
           | .text),
         "",
         "Tool calls:",
         (.messages[]
-          | select(.info.role == "assistant")
-          | .parts[]
+          | select(.type == "assistant")
+          | .content[]
           | select(.type == "tool")
-          | [.tool, .state.status, (.state.input | tojson)]
+          | [.name, .state.status, (.state.input | tojson)]
           | @tsv)
       ' "$attachment" | fold -s -w 160 > "$score_attachment"
     else
@@ -187,16 +169,12 @@ score_suite() {
     attachments+=(--file="$score_attachment")
   done
 
-  events=$(OPENCODE_DISABLE_EXTERNAL_SKILLS=1 \
-    OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1 \
-    OPENCODE_CONFIG_CONTENT="$scorer_config" \
-    opencode run "$prompt Use Read to inspect every attached file completely; previews may be truncated." \
-    --pure --dir "$score_dir" \
-    --model "$model" --variant "$variant" --format json \
+  events=$(run_isolated_opencode "$scorer_config" "$score_dir" \
+    "$prompt Use Read to inspect every attached file completely; previews may be truncated." \
     "${attachments[@]}")
   session_id=$(jq -rs 'map(select(.type == "step_start"))[0].sessionID' <<< "$events")
   [[ "$session_id" == ses_* ]]
-  opencode export "$session_id" > "$temporary_export"
+  opencode session export "$session_id" > "$temporary_export"
   jq -e . "$temporary_export" >/dev/null
   assert_scorer_tools "$temporary_export" "$score_dir"
   mv "$temporary_export" "$evidence_dir/$export_name.json"
@@ -319,13 +297,13 @@ score_existing_authority() {
         |
         [
           .messages[]
-          | select(.info.role == "assistant")
-          | .parts[]
+          | select(.type == "assistant")
+          | .content[]
           | select(
               .type == "tool"
-              and .tool == "skill"
-              and .state.input.name == "running-pr-backed-review-loops"
-              and ((.state.output // "") | contains($body))
+              and .name == "skill"
+              and .state.input.id == "running-pr-backed-review-loops"
+              and ((.state.content // []) | map(.text // "") | join("") | contains($body))
             )
         ]
         | any
