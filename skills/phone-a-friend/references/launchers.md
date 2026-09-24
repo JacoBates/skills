@@ -11,16 +11,14 @@ Write the bounded brief to a file with the normal file-editing tool. Do not inte
 OpenCode is the default launcher. It exposes every catalog model and an explicit per-run variant.
 
 ```bash
-opencode run \
+cd '<cwd>' && opencode run \
   'Complete the attached delegated brief and return its requested report.' \
-  --model '<provider/model>' \
-  --variant '<effort>' \
-  --dir '<cwd>' \
+  --model '<provider/model>#<effort>' \
   --format json \
   --file '<brief>'
 ```
 
-Place the positional instruction before `--file`; the repeatable file option consumes following values. Use a fresh session. Do not pass `--continue` or `--session`. Keep the complete JSON event stream as evidence and extract the final text separately.
+The variant is part of the `--model` value, and the run uses the current working directory, so set it through the shell tool's working-directory option where available. Place the positional instruction before `--file`; the repeatable file option consumes following values. Use a fresh session. Do not pass `--continue` or `--session`. Keep the complete JSON event stream as evidence and extract the final text separately.
 
 ## Codex
 
