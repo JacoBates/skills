@@ -26,7 +26,7 @@ Use Codex for a Codex-only capability, especially computer use.
 
 ```bash
 codex exec \
-  --model 'gpt-5.6-sol' \
+  --model 'gpt-6.1-sol' \
   --config 'model_reasoning_effort="high"' \
   --cd '<cwd>' \
   --json \

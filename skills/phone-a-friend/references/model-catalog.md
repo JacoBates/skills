@@ -6,10 +6,10 @@ Read this file before every route selection. Scores are personal working judgmen
 
 | Model | Intelligence | Exploratory | Debugging | Surgical | Taste | Bulk data | Efficiency |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Claude Fable 5 | 9 | 10 | 8 | 8 | 10 | 8 | 4 |
-| Claude Opus 5 | 7 | 6 | 7 | 6 | 8 | 7 | 5 |
-| GPT-5.6 Sol | 9 | 8 | 9 | 9 | 4 | 8 | 7 |
-| GPT-5.6 Luna | 5 | 5 | 6 | 8 | 1 | 9 | 10 |
+| Claude Fable 5.1 | 9 | 10 | 8 | 8 | 10 | 8 | 4 |
+| Claude Opus 5.5 | 7 | 6 | 7 | 6 | 8 | 7 | 5 |
+| GPT-6.1 Sol | 9 | 8 | 9 | 9 | 4 | 8 | 7 |
+| GPT-6 Luna | 5 | 5 | 6 | 8 | 1 | 9 | 10 |
 
 Quality dimensions:
 
@@ -26,10 +26,10 @@ Efficiency combines speed, subscription pressure, and cost efficiency. Exclude i
 
 | Model | OpenCode ID | Effort |
 |---|---|---|
-| Fable | `anthropic/claude-fable-5` | Always `high` |
-| Opus | `anthropic/claude-opus-5` | Always `high` |
-| Sol | `openai/gpt-5.6-sol` | `medium`, or `high` for persistence |
-| Luna | `openai/gpt-5.6-luna` | Always `max` |
+| Fable | `anthropic/claude-fable-5-1` | Always `high` |
+| Opus | `anthropic/claude-opus-5-5` | Always `high` |
+| Sol | `openai/gpt-6.1-sol` | `medium`, or `high` for persistence |
+| Luna | `openai/gpt-6-luna` | Always `max` |
 
 Sol persistence signals include multi-step tool use, computer use, ambiguous debugging, recovery after a failed attempt, and repeated verification. Never lower effort merely to save usage.
 
