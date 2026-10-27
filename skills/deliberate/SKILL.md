@@ -43,7 +43,7 @@ Once the direction is chosen, present the design in one message, scaled to the t
 
 The user's go-ahead on the design ends deliberation. Then:
 
-- If the work is a single change with an obvious sequence, build it.
+- If the work is a single change with an obvious sequence, build it test-first, using the `test-driven-development` skill if it is available.
 - If it spans several steps or PRs, write an implementation plan first, with a planning skill if one is available.
 
 Do not write or commit a spec file unless the user asks. If the design needs to survive the session, save it where the user's instructions say working notes go.
