@@ -26,8 +26,8 @@ Efficiency combines speed, subscription pressure, and cost efficiency. Exclude i
 
 | Model | OpenCode ID | Effort |
 |---|---|---|
-| Fable | `anthropic/claude-fable-5-1` | Always `high` |
-| Opus | `anthropic/claude-opus-5-5` | Always `high` |
+| Fable | `claude-agent/claude-fable-5-1[1m]` | Always `high` |
+| Opus | `claude-agent/opus` | Always `high` |
 | Sol | `openai/gpt-6.1-sol` | `medium`, or `high` for persistence |
 | Luna | `openai/gpt-6-luna` | Always `max` |
 
